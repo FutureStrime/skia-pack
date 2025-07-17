@@ -23,7 +23,7 @@ def main():
   if build_type == 'Debug':
     args = ['is_debug=true']
   else:
-    args = ['is_official_build=true']
+    args = ['is_official_build=true', 'is_debug=false']
 
   args += [
     'target_cpu="' + machine + '"',
@@ -142,7 +142,10 @@ def main():
   gn = 'gn.exe' if 'windows' == host else 'gn'
   print([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args)])
   subprocess.check_call([os.path.join('bin', gn), 'gen', out, '--args=' + ' '.join(args)])
-  subprocess.check_call([os.path.join('..', tools_dir, ninja), '-C', out, 'skia', 'modules'])
+  if build_type == 'Debug':
+    subprocess.check_call([os.path.join('..', tools_dir, ninja), '-C', out, 'skia', 'modules', 'viewer', 'dm'])
+  else:
+    subprocess.check_call([os.path.join('..', tools_dir, ninja), '-C', out, 'skia', 'modules'])
 
   return 0
 
